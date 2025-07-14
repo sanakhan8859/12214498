@@ -1,29 +1,29 @@
-const express = require('express')
-require('dotenv').config()
-require('./db/connect')
-const v1Router = require("./routers/v1/v1.router")
-const {RedirectURLController} = require("./controllers/url.controller")
-const {RequestLoggerMiddleware} = require("./middlewares/requestlogger.middleware")
-const cors = require("cors")
+const express = require('express');
+require('dotenv').config();
+const cors = require('cors');
+const { dbConnect } = require('./backend-test-submission/db/connect');
+const v1RouterUrl = require('./backend-test-submission/route/v1/v1.router');
+const PORT = process.env.PORT;
 
-const NODE_ENV = process.env.NODE_ENV
-
-const PORT = process.env[`${NODE_ENV}_PORT`]
+const app = express();
 
 
-const server = express()
-
-server.use(express.json())
-
-server.use(RequestLoggerMiddleware)
+app.use(express.json());
+app.use(cors());
 
 
-server.use(cors())
+app.use('/api/v1', v1RouterUrl);
 
-server.get("/:keyId", RedirectURLController)
+async function startServer() {
+  try {
+    await dbConnect();
+    app.listen(PORT, () => {
+      console.log(`✅ Server is running on http://localhost:${PORT}`);
+    });
+  } catch (error) {
+    console.error('❌ Error starting the server:', error);
+    process.exit(1);
+  }
+}
 
-server.use("/api/v1", v1Router)
-
-server.listen(PORT, ()=>{
-    console.log(`${NODE_ENV} Server is started on PORT - ${PORT}`)
-})
+startServer();
