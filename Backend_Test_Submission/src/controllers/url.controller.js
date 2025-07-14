@@ -1,5 +1,5 @@
-const UrlModel = require('../model/url.model')
-const { Log } = require('../../logging-middleware/logger')
+const UrlModel = require('../model/urls.model')
+const { Log } = require('../../Logging_Middleware/requestlogger.middleware')
 const { createShortUrl } = require('../service/url.service')
 const createShortUrlController = async (req, res) => {
     try {
