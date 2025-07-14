@@ -1,13 +1,7 @@
-const express = require("express")
-const URLRouter = require("./url.router")
-const authRouter = require("./auth.router")
-const UserRouter = require('./user.router')
-const v1Router = express.Router()
+const express = require('express');
+const  urlRouter  = require('./url.api');
+const v1RouterUrl = express.Router();
+v1RouterUrl.use('/url', urlRouter);
 
-v1Router.use("/short-url", URLRouter)
+module.exports = v1RouterUrl;
 
-v1Router.use("/auth", authRouter)
-
-v1Router.use("/user", UserRouter)
-
-module.exports = v1Router
