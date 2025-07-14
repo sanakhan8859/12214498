@@ -1,4 +1,4 @@
-const UrlModel = require('../model/url.model');
+const UrlModel = require('../model/urls.model');
 const crypto = require('crypto');
 
 const generateShortcode = () => {
