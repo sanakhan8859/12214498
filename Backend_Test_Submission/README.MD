@@ -1,4 +1,4 @@
-# 🔗 ShortifyBackend - URL Shortener API
+# 🔗URL Shortener API
 
 A simple and efficient **backend API** built with **Node.js** and **Express.js** to shorten URLs and manage redirections. This backend supports custom aliases, automatic code generation, and API-based interaction for integration with frontend clients.
 
