@@ -72,20 +72,36 @@ Response (200 OK):
 <img width="1207" height="348" alt="Image" src="https://github.com/user-attachments/assets/4eb6139f-315f-4363-805d-720e9568fbd6" />
 
 Features Deep Dive
+
 Analytics Tracking
+
 Click Counting: Real-time click tracking
+
 Referrer Detection: Track traffic sources
+
 Location Tracking: Geographic analytics
+
 Timestamp Logging: Detailed access history
+
+
 Security & Validation
+
 URL Validation: Ensures valid URLs only
+
 Shortcode Uniqueness: Prevents collisions
+
 Expiration Handling: Automatic cleanup of expired URLs
+
 Rate Limiting: Built-in protection against abuse
+
 Logging & Monitoring
+
 Request Logging: All API requests logged
+
 Error Tracking: Comprehensive error logging
+
 Performance Metrics: Response time tracking
+
 Integration: Centralized log management
 
 
