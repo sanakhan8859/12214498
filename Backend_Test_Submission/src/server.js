@@ -1,8 +1,8 @@
 const express = require('express');
 require('dotenv').config();
 const cors = require('cors');
-const { dbConnect } = require('./backend-test-submission/db/connect');
-const v1RouterUrl = require('./backend-test-submission/route/v1/v1.router');
+const { dbConnect } = require('./Backend_Test_Submission/db/connect');
+const v1RouterUrl = require('./Backend_Test_Submission/routers/v1/v1.router');
 const PORT = process.env.PORT;
 
 const app = express();
