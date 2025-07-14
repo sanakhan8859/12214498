@@ -1,10 +1,15 @@
 const express = require('express')
-const {AuthenticationMiddleware} = require("./../../middlewares/auth.middleware")
+const { createShortUrlController } = require('../../controller/createShortUrlController');
+const { redirectController } = require('../../controller/redirectController');
+const { urlStatsController } = require('../../controller/urlStatsController');
+const { logAuthMiddleware } = require('../../middleware/log.middleware')
 
-const URLRouter = express.Router()
+const urlRouter = express.Router();
 
-const {CreateNewURLController} = require("./../../controllers/url.controller")
+urlRouter.post('/shorturls', logAuthMiddleware, createShortUrlController);
 
-URLRouter.post("/new", AuthenticationMiddleware, CreateNewURLController)
+urlRouter.get('/shorturls/:shortcode', logAuthMiddleware, urlStatsController);
 
-module.exports = URLRouter
+urlRouter.get('/:shortcode', logAuthMiddleware, redirectController);
+
+module.exports = urlRouter
