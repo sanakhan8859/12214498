@@ -1,26 +1,29 @@
-const fs = require('fs');
-const path = require('path');
+const axios = require('axios');
 
-const logFilePath = path.join(process.cwd(), 'logs.log');
+const BASE_URL = 'http://20.244.56.144/evaluation-service/logs';
+const AUTH_TOKEN = process.env.AFFORDMED_AUTH_TOKEN; 
 
-const RequestLoggerMiddleware = async (req, res, next) => {
+
+const Log = async (stack, level, logPackage, message) => {
     try {
-        const logEntry = `${new Date().toISOString()} ${req.method} ${req.url} ${req.ip}\n`;
-
-        fs.appendFile(logFilePath, logEntry, (err) => {
-            if (err) {
+        const response = await axios.post(
+            BASE_URL,
+            {
+                stack,
+                level,
+                package: logPackage,
+                message
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${AUTH_TOKEN}`
+                }
             }
-        });
-
-        next();
-    } catch (err) {
-        res.status(err.statusCode || 500).json({
-            success: false,
-            message: err.message
-        });
+        );
+        console.log("Log sent successfully:", response.data.message);
+    } catch (error) {
+        console.error("Failed to send log:", error.message);
     }
 };
 
-module.exports = {
-    RequestLoggerMiddleware
-};
+module.exports = { Log };
