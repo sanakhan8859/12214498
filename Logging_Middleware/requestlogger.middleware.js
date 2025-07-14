@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-// Always puts logs.log in root directory of your project
+
 const logFilePath = path.join(process.cwd(), 'logs.log');
 
 const RequestLoggerMiddleware = async (req, res, next) => {
