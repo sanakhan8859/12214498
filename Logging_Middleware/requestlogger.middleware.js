@@ -1,23 +1,28 @@
-const RequestLoggerMiddleware = async (req, res, next)=>{
-    try{
+const fs = require('fs');
+const path = require('path');
 
-        const httpMethod = req.method;
-        const ip = req.ip
-        const url = req.url
+// Always puts logs.log in root directory of your project
+const logFilePath = path.join(process.cwd(), 'logs.log');
 
-        console.log(`${httpMethod} ${url} ${ip} ${new Date()}`)
+const RequestLoggerMiddleware = async (req, res, next) => {
+    try {
+        const logEntry = `${new Date().toISOString()} ${req.method} ${req.url} ${req.ip}\n`;
 
-        next()
+        fs.appendFile(logFilePath, logEntry, (err) => {
+            if (err) {
+               y
+            }
+        });
 
-    }catch(err){
-        console.log(`Error in RequestLoggerMiddleware with err : ${err}`)
-        res.status(err.statusCode ? err.statusCode : 500).json({
-            success : false,
-            message : err.message
-        })
+        next();
+    } catch (err) {
+        res.status(err.statusCode || 500).json({
+            success: false,
+            message: err.message
+        });
     }
-}
+};
 
 module.exports = {
     RequestLoggerMiddleware
-}
+};
