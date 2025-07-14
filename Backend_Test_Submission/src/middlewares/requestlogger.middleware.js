@@ -1,23 +1,29 @@
-const RequestLoggerMiddleware = async (req, res, next)=>{
-    try{
+const axios = require('axios');
 
-        const httpMethod = req.method;
-        const ip = req.ip
-        const url = req.url
+const BASE_URL = 'http://20.244.56.144/evaluation-service/logs';
+const AUTH_TOKEN = process.env.AFFORDMED_AUTH_TOKEN; 
 
-        console.log(`${httpMethod} ${url} ${ip} ${new Date()}`)
 
-        next()
-
-    }catch(err){
-        console.log(`Error in RequestLoggerMiddleware with err : ${err}`)
-        res.status(err.statusCode ? err.statusCode : 500).json({
-            success : false,
-            message : err.message
-        })
+const Log = async (stack, level, logPackage, message) => {
+    try {
+        const response = await axios.post(
+            BASE_URL,
+            {
+                stack,
+                level,
+                package: logPackage,
+                message
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${AUTH_TOKEN}`
+                }
+            }
+        );
+        console.log("Log sent successfully:", response.data.message);
+    } catch (error) {
+        console.error("Failed to send log:", error.message);
     }
-}
+};
 
-module.exports = {
-    RequestLoggerMiddleware
-}
+module.exports = { Log };
