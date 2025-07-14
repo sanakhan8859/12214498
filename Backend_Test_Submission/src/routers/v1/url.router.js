@@ -1,8 +1,8 @@
 const express = require('express')
-const { createShortUrlController } = require('../../controller/createShortUrlController');
-const { redirectController } = require('../../controller/redirectController');
-const { urlStatsController } = require('../../controller/urlStatsController');
-const { logAuthMiddleware } = require('../../middleware/log.middleware')
+const { createShortUrlController } = require('../../controller/url.controller');
+const { redirectController } = require('../../controller/user.controller');
+const { urlStatsController } = require('../../controller/auth.controller');
+const { logAuthMiddleware } = require('../../middleware/requestlogger.middleware')
 
 const urlRouter = express.Router();
 
