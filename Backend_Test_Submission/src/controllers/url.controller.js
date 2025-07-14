@@ -43,7 +43,6 @@ const CreateNewURLController = async (req, res)=>{
 
     }catch(err){
 
-        console.log(`Error in CreateNewURLController with err : ${err}`)
 
         res.status(err.statusCode ? err.statusCode : 500).json({
             success : false,
@@ -104,8 +103,6 @@ const RedirectURLController = async (req, res)=>{
         res.redirect(originalUrl)
 
     }catch(err){
-
-        console.log(`Error in RedirectURLController with err : ${err}`)
 
         res.status(err.statusCode?err.statusCode:500).json({
             success : false,
