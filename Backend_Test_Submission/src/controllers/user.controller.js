@@ -1,99 +1,35 @@
-const {IsUserPresentUsingUserIdService, DeleteUserByUserIdService} = require("./../services/user.service")
-const {GetURLsOfTheUserUsingUserIdService} = require("./../services/url.service")
+const UrlModel = require('../model/url.model')
+const { Log } = require('../../logging-middleware/logger')
+const {  getUrlByShortcode, recordClick } = require('../service/url.service')
 
-const FetchAllUrlsOfTheUserUsingUserIdController = async (req, res)=>{
-    try{
-
-        const userId = req.userId
-
-        if(!userId){
-            const err = new Error("userId param is required")
-            err.statusCode = 400
-            throw err
-        }
-
-        // check if user is present or not, if not present throw err
-        const IsUserPresentUsingUserIdServiceResult = await IsUserPresentUsingUserIdService(userId)
-        if(!IsUserPresentUsingUserIdServiceResult.success){
-            const err = new Error("User Invalid")
-            err.statusCode = 404
-            throw err
-        }
-
-        // fetch all the urls of the user and return back to client
-        const GetURLsOfTheUserUsingUserIdServiceResult = await GetURLsOfTheUserUsingUserIdService(userId)
-        if(!GetURLsOfTheUserUsingUserIdServiceResult.success){
-            const err = new Error("Unable to fetch URLS")
-            throw err
-        }
-
-        const {data: URLS} = GetURLsOfTheUserUsingUserIdServiceResult
-
-        res.status(200).json({
-            success : true,
-            message : `${URLS.length} urls are found`,
-            data : URLS
-        })
-
-    }catch(err){
-
-        console.log(`Error in FetchAllUrlsOfTheUserUsingUserIdController with err : ${err}`)
-
-        res.status(err.statusCode ? err.statusCode : 500).json({
-            success : false,
-            message : err.message
-        })
-
+const redirectController = async (req, res) => {
+    try {
+      const { shortcode } = req.params;
+  
+      const urlEntry = await getUrlByShortcode(shortcode);
+      if (!urlEntry) {
+        await Log('backend', 'error', 'controller', `Shortcode '${shortcode}' not found`);
+        return res.status(404).json({ message: 'Shortcode not found' });
+      }
+  
+      const currentTime = new Date();
+      if (currentTime > urlEntry.expiry) {
+        await Log('backend', 'warn', 'controller', `Shortcode '${shortcode}' has expired`);
+        return res.status(410).json({ message: 'Shortcode has expired' }); // 410 Gone
+      }
+  
+      const referrer = req.get('Referrer') || 'Direct';
+      const ip = req.ip || req.connection.remoteAddress || 'Unknown';
+      await recordClick(shortcode, { timestamp: currentTime, referrer, location: ip });
+  
+      await Log('backend', 'info', 'controller', `Redirected using shortcode '${shortcode}'`);
+  
+      res.redirect(urlEntry.originalUrl);
+    } catch (error) {
+      await Log('backend', 'fatal', 'controller', `Redirection failed: ${error.message}`);
+      res.status(500).json({ message: 'Internal Server Error' });
     }
-}
-
-const DeleteUserByUserIdController = async (req, res)=>{
-    try{
-
-        const {userId : userIdToDelete} = req.params
-
-        const adminUserId = req.userId
-
-        const AdminDetail = await IsUserPresentUsingUserIdService(adminUserId)
-        const UserToDeleteDetail = await IsUserPresentUsingUserIdService(userIdToDelete)
-
-        const orgIdofAdmin = AdminDetail.data.organizationId
-
-        const orgIdofUserToDelete = UserToDeleteDetail.data.organizationId
-        
-        // check organization of adminUserId and userIdToDelete is same or not, if not same throw err
-        if(!orgIdofAdmin.equals(orgIdofUserToDelete)){
-            const err = new Error(`Invalid Request`)
-            err.statusCode = 403
-            throw err
-        }
-
-        // delete user
-        const DeleteUserByUserIdControllerResult = await DeleteUserByUserIdService(userIdToDelete)
-
-        if(!DeleteUserByUserIdControllerResult.success){
-            const err = new Error(`Unable to Delete user`)
-            err.statusCode = 500
-            throw err
-        }
-
-        res.status(200).json({
-            success : true, 
-            message : `User with userId : ${userIdToDelete} deleted successfully`
-        })
-
-    }catch(err){
-
-        console.log(`Error in DeleteUserByUserIdController with err : ${err}`)
-
-        res.status(err.statusCode ? err.statusCode : 500).json({
-            success : false,
-            message : err.message
-        })
-    }
-}
-
+  };
 module.exports = {
-    FetchAllUrlsOfTheUserUsingUserIdController,
-    DeleteUserByUserIdController
+    redirectController
 }
