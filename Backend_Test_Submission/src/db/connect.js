@@ -1,12 +1,22 @@
-const mongoose = require("mongoose")
-require('dotenv').config()
+const mongoose = require('mongoose');
+require('dotenv').config();
 
-const NODE_ENV = process.env.NODE_ENV
+const MONGO_DB_URI = process.env.MONGO_DB_URI;
+if (!MONGO_DB_URI) {
+    throw new Error('Missing MONGO_DB_URI environment variable');
+}
 
-const MONGODB_URI = process.env[`${NODE_ENV}_MONGODB_URI`]
+const dbConnect = async () => {
+    try {
+        const connectionResponse = await mongoose.connect(MONGO_DB_URI);
+        console.log(`MongoDB connected successfully`);
+        return connectionResponse;
+    } catch (error) {
+        console.error('Error while connecting to MongoDB:', error);
+        throw error;
+    }
+}
 
-mongoose.connect(MONGODB_URI).then(()=>{
-    console.log(`Connected to ${NODE_ENV} MONGODB`)
-}).catch((err)=>{
-    console.log(`Error while connecting to ${NODE_ENV} MONGODB, with err - ${err}`)
-})
+module.exports = { 
+    dbConnect
+}
