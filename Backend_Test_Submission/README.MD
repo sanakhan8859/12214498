@@ -33,3 +33,13 @@ A simple and efficient **backend API** built with **Node.js** and **Express.js**
 Create a .env file in the root directory:
 
 <img width="1220" height="380" alt="Image" src="https://github.com/user-attachments/assets/df9d5d1b-7842-41ef-8dbc-5f4ec750f9d7" />
+
+📡 API Reference
+Create Short URL
+POST /api/v1/url/shorturls
+
+Creates a new shortened URL with optional customization.
+
+Request Body:
+
+
