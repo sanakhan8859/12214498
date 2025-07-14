@@ -1,7 +1,6 @@
 const fs = require('fs');
 const path = require('path');
 
-
 const logFilePath = path.join(process.cwd(), 'logs.log');
 
 const RequestLoggerMiddleware = async (req, res, next) => {
@@ -10,7 +9,6 @@ const RequestLoggerMiddleware = async (req, res, next) => {
 
         fs.appendFile(logFilePath, logEntry, (err) => {
             if (err) {
-               y
             }
         });
 
